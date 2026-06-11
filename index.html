@@ -110,6 +110,11 @@
   .badge-pending{background:var(--blue-light);color:var(--blue);border-radius:4px;padding:1px 7px;font-size:11px}
   .badge-empty{color:var(--text-hint);font-size:11px}
 
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:none;transition:all .15s}
+  .pin-dot.filled{background:var(--text);border-color:var(--text)}
+  .pin-key{padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:18px;font-weight:500;cursor:pointer;transition:background .1s}
+  .pin-key:active{background:var(--gray-light)}
+  #pin-modal.open{display:flex !important}
   @media(max-width:420px){
     .groups-grid{grid-template-columns:1fr 1fr}
     .header h1{font-size:17px}
@@ -143,7 +148,7 @@
   <button class="tab" onclick="showTab('apuestas',this)">Apuestas</button>
   <button class="tab" onclick="showTab('tabla',this)">Tabla</button>
   <button class="tab" onclick="showTab('reglas',this)">Reglas</button>
-  <button class="tab" onclick="showTab('admin',this)">⚙ Admin</button>
+  <button class="tab" onclick="openAdmin(this)">⚙ Admin</button>
 </div>
 
 <!-- GRUPOS -->
@@ -201,6 +206,33 @@
       <li>Los puntos se calculan solos y aparecen en <strong>Tabla</strong>.</li>
       <li>En <strong>Apuestas</strong> puedes ver qué apostó cada quien.</li>
     </ol>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div id="pin-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center;display:none">
+  <div style="background:var(--bg);border-radius:var(--radius);padding:2rem 1.5rem;width:280px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="font-size:28px;margin-bottom:.5rem">🔒</div>
+    <div style="font-size:16px;font-weight:600;margin-bottom:.25rem">Zona Admin</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem">Ingresa el PIN de 4 dígitos</div>
+    <div id="pin-dots" style="display:flex;justify-content:center;gap:10px;margin-bottom:1.25rem">
+      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinClear()" style="font-size:11px;color:var(--text-muted)">⌫</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key" onclick="pinCancel()" style="font-size:11px;color:var(--red)">✕</button>
+    </div>
+    <div id="pin-error" style="font-size:12px;color:var(--red);min-height:18px"></div>
   </div>
 </div>
 
@@ -535,6 +567,37 @@ function showTab(name,btn){
 }
 
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+
+/* ===== PIN ADMIN ===== */
+const ADMIN_PIN='2026';
+let pinBuffer='',adminUnlocked=false,pendingAdminBtn=null;
+
+function openAdmin(btn){
+  if(adminUnlocked){showTab('admin',btn);return;}
+  pendingAdminBtn=btn;pinBuffer='';
+  updatePinDots();
+  document.getElementById('pin-error').textContent='';
+  document.getElementById('pin-modal').classList.add('open');
+}
+function pinKey(d){
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=d;updatePinDots();
+  if(pinBuffer.length===4){
+    setTimeout(()=>{
+      if(pinBuffer===ADMIN_PIN){
+        adminUnlocked=true;
+        document.getElementById('pin-modal').classList.remove('open');
+        showTab('admin',pendingAdminBtn);
+      } else {
+        document.getElementById('pin-error').textContent='PIN incorrecto, intenta de nuevo';
+        pinBuffer='';updatePinDots();
+      }
+    },200);
+  }
+}
+function pinClear(){if(pinBuffer.length){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();}}
+function pinCancel(){document.getElementById('pin-modal').classList.remove('open');pinBuffer='';updatePinDots();}
+function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuffer.length));}
 
 refreshAll();
 </script>
