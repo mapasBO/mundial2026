@@ -97,6 +97,7 @@ input[type=text]{flex:1;padding:9px 12px;border:1px solid #D3D1C7;border-radius:
     <button class="tab" onclick="showTab('sem',this)">Semis</button>
     <button class="tab" onclick="showTab('fin',this)">🏆 Final</button>
     <button class="tab" onclick="showTab('mispicks',this)">Mis apuestas</button>
+    <button class="tab" onclick="showTab('comparativa',this)">Comparativa</button>
     <button class="tab" onclick="showTab('tabla',this)">Tabla</button>
     <button class="tab" onclick="openAdmin(this)">⚙ Admin</button>
   </div>
@@ -146,9 +147,15 @@ input[type=text]{flex:1;padding:9px 12px;border:1px solid #D3D1C7;border-radius:
     <div id="mispicks-content"></div>
   </div>
 
+  <!-- COMPARATIVA -->
+  <div id="page-comparativa" class="page">
+    <div class="info-box">📊 Apuestas de todos los participantes en los 16avos.</div>
+    <div id="comp-content" style="overflow-x:auto"></div>
+  </div>
+
   <!-- TABLA -->
   <div id="page-tabla" class="page">
-    <div class="info-box">🏆 Clasificación general · Adultos ×3 Bs · Niños ×1 Bs</div>
+    <div class="info-box">🏆 Clasificación general · Adultos ×2 Bs · Niños ×1 Bs</div>
     <div class="ptabla" id="tabla-body"></div>
   </div>
 
@@ -265,7 +272,7 @@ onValue(ref(db,'matchDefs'), s=>{ matchDefs=s.val()||{}; renderPhasePages(); ren
 document.getElementById('loading').style.display='none';
 document.getElementById('app').style.display='block';
 
-function renderAll(){ renderR16(); renderPhasePages(); renderTabla(); }
+function renderAll(){ renderR16(); renderPhasePages(); renderTabla(); renderComparativa(); renderMisPicks(); }
 
 // ── BOTÓN ─────────────────────────────────────────────
 function mBtn(id, team){
@@ -390,6 +397,58 @@ function renderMisPicks(){
     </div>`;
 }
 
+// ── COMPARATIVA ───────────────────────────────────────
+function renderComparativa(){
+  const el=document.getElementById('comp-content');
+  if(!el)return;
+  if(!players.length){el.innerHTML='<div class="pending">Sin participantes.</div>';return;}
+
+  const thStyle='padding:7px 8px;background:#2C2C2A;color:#fff;font-size:11px;font-weight:600;white-space:nowrap;text-align:center;border:1px solid #444';
+  const tdStyle='padding:6px 8px;font-size:11px;text-align:center;border:1px solid #D3D1C7;white-space:nowrap';
+  const tdLbl='padding:6px 10px;font-size:11px;color:#5F5E5A;border:1px solid #D3D1C7;white-space:nowrap;background:#F8F7F3;font-weight:600';
+
+  // header row
+  let th=`<th style="${thStyle};text-align:left;min-width:140px">Partido</th>`;
+  players.forEach(p=>{
+    const mult=mults[p]||1;
+    const pts=scorePlayer(p);
+    const bs=bsPlayer(p);
+    th+=`<th style="${thStyle}">${p}<br><span style="font-weight:400;font-size:10px;opacity:.8">${pts}pts · ${bs}Bs</span></th>`;
+  });
+
+  // match rows - only R16 for now
+  let rows='';
+  R16.forEach(m=>{
+    const rw=mresults[m.id]||'';
+    let cells='';
+    players.forEach(p=>{
+      const pick=(preds[p]&&preds[p].matches&&preds[p].matches[m.id])||'';
+      const isOk=rw&&pick&&rw===pick;
+      const isBad=rw&&pick&&rw!==pick;
+      let bg='#fff', tc='#2C2C2A', txt=pick?pick.slice(0,12):'—';
+      if(!pick){tc='#B4B2A9';}
+      else if(isOk){bg='#E1F5EE';tc='#0F6E56';}
+      else if(isBad){bg='#FCEBEB';tc='#A32D2D';}
+      else{bg='#EBF3FF';tc='#185FA5';}
+      cells+=`<td style="${tdStyle};background:${bg};color:${tc}">${txt}</td>`;
+    });
+    const rwTxt=rw?`<span style="color:#1D9E75;font-weight:700">${rw.slice(0,10)}</span>`:'<span style="color:#B4B2A9">—</span>';
+    rows+=`<tr><td style="${tdLbl}">${m.l}<br>${rwTxt}</td>${cells}</tr>`;
+  });
+
+  // totals row
+  let totals='';
+  players.forEach(p=>{
+    totals+=`<td style="${tdStyle};background:#FAEEDA;color:#BA7517;font-weight:700">${bsPlayer(p)} Bs</td>`;
+  });
+  rows+=`<tr><td style="${tdLbl};background:#2C2C2A;color:#fff">Total Bs</td>${totals}</tr>`;
+
+  el.innerHTML=`<table style="border-collapse:collapse;min-width:100%">
+    <thead><tr>${th}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
 // ── TABLA ─────────────────────────────────────────────
 function renderTabla(){
   const rows=players.map(p=>({name:p,pts:scorePlayer(p),bs:bsPlayer(p)})).sort((a,b)=>b.bs-a.bs||b.pts-a.pts);
@@ -462,7 +521,7 @@ function renderMults(){
       return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #D3D1C7">
         <span style="flex:1;font-size:13px">${p}</span>
         <button class="rbtn${m===1?' on':''}" onclick="setMult('${esc(p)}',1)">×1 niño</button>
-        <button class="rbtn${m===3?' on':''}" onclick="setMult('${esc(p)}',3)">×3 adulto</button>
+        <button class="rbtn${m===2?' on':''}" onclick="setMult('${esc(p)}',2)">×2 adulto</button>
       </div>`;
     }).join('')||'<span style="font-size:13px;color:#888780">Sin participantes.</span>';
 }
@@ -541,6 +600,7 @@ function showTab(name,btn){
   btn.classList.add('active');
   if(name==='tabla')renderTabla();
   if(name==='mispicks')renderMisPicks();
+  if(name==='comparativa')renderComparativa();
   if(name==='admin'){renderTags();renderMults();renderAdminR16();renderAdminPhases();}
 }
 window.showTab=showTab;
