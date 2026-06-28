@@ -238,12 +238,13 @@ let adminOk=false, pendBtn=null, pinBuf='';
 
 // ── FIREBASE ──────────────────────────────────────────
 onValue(ref(db,'players'),   s=>{ players=s.val()?Object.values(s.val()):[];  refreshSel();renderTags();renderMults();renderTabla(); });
-onValue(ref(db,'preds'),     s=>{
+onValue(ref(db,'predictions'), s=>{
   const raw=s.val()||{};
   preds={};
   Object.entries(raw).forEach(([p,d])=>{
     if(!d)return;
-    preds[p]={matches:d.matches||{}};
+    preds[p]={ matches: d.matches||{} };
+    // backward compat: flat keys
     Object.entries(d).forEach(([k,v])=>{
       if(/^m\d/.test(k)&&typeof v==='string') preds[p].matches[k]=v;
     });
@@ -312,7 +313,7 @@ window.pickMatch=pickMatch;
 
 async function guardar(){
   if(!active){toast('Elige tu nombre primero');return;}
-  await set(ref(db,'preds/'+active),preds[active]||{});
+  await set(ref(db,'predictions/'+active),preds[active]||{});
   toast('💾 Apuestas de '+active+' guardadas ✅');
 }
 window.guardar=guardar;
@@ -381,7 +382,7 @@ async function removePlayer(name){
   const nl=players.filter(p=>p!==name);
   await set(ref(db,'players'),nl.length?nl:null);
   const np={...preds};delete np[name];
-  await set(ref(db,'preds'),Object.keys(np).length?np:null);
+  await set(ref(db,'predictions'),Object.keys(np).length?np:null);
   if(active===name){active='';document.getElementById('plabel').textContent='';refreshSel();}
   toast('🗑 '+name+' eliminado');
 }
