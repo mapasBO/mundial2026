@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Firebase</title>
+<style>
+body{font-family:monospace;padding:1rem;background:#111;color:#0f0;font-size:13px}
+pre{white-space:pre-wrap;word-break:break-all}
+</style>
+</head>
+<body>
+<h2 style="color:#fff;margin-bottom:1rem">📊 Estructura Firebase</h2>
+<pre id="out">Cargando...</pre>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+const FB = initializeApp({
+  apiKey:"AIzaSyD6eVKADkgXnHNaFON1Wf348TtV_YqDyLk",
+  authDomain:"mundial2026-959c6.firebaseapp.com",
+  databaseURL:"https://mundial2026-959c6-default-rtdb.firebaseio.com",
+  projectId:"mundial2026-959c6",
+  storageBucket:"mundial2026-959c6.firebasestorage.app",
+  messagingSenderId:"327469755322",
+  appId:"1:327469755322:web:0aff76299b5bd17b278b83"
+});
+const db = getDatabase(FB);
+const snap = await get(ref(db,'/'));
+document.getElementById('out').textContent = JSON.stringify(snap.val(), null, 2);
+</script>
+</body>
+</html>
