@@ -89,17 +89,14 @@
   .badge-ok{background:#E1F5EE;color:#0F6E56;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600}
   .badge-fail{background:#FCEBEB;color:#A32D2D;border-radius:4px;padding:1px 7px;font-size:11px}
   .badge-p{background:var(--blue-light);color:var(--blue);border-radius:4px;padding:1px 7px;font-size:11px}
-  /* PIN */
   .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:none;transition:all .15s}
   .pin-dot.filled{background:var(--text);border-color:var(--text)}
   .pin-key{padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--text);font-size:18px;font-weight:500;cursor:pointer}
   .pin-key:active{background:var(--gray-light)}
   #pin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center}
   #pin-modal.open{display:flex !important}
-  /* TOAST */
   #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
   #toast.show{opacity:1}
-  /* LOADING */
   #loading{position:fixed;inset:0;background:var(--bg-page);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
   .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .7s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -110,15 +107,9 @@
 </style>
 </head>
 <body>
-
-<div id="loading">
-  <div class="spinner"></div>
-  <div style="font-size:13px;color:var(--text-muted)">Conectando con la base de datos...</div>
-</div>
-
+<div id="loading"><div class="spinner"></div><div style="font-size:13px;color:var(--text-muted)">Conectando...</div></div>
 <div id="toast"></div>
 
-<!-- PIN MODAL -->
 <div id="pin-modal">
   <div style="background:var(--bg);border-radius:var(--radius);padding:2rem 1.5rem;width:280px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2)">
     <div style="font-size:28px;margin-bottom:.5rem">🔒</div>
@@ -144,14 +135,12 @@
   <h1>⚽ Mundial 2026 — Polla Familiar</h1>
   <p>EE.UU. · Canadá · México</p>
 </div>
-
 <div class="player-bar">
   <select id="player-sel" onchange="selectPlayer(this.value)">
     <option value="">— Elige tu nombre —</option>
   </select>
   <span id="active-label" style="font-size:13px;color:var(--green);font-weight:500"></span>
 </div>
-
 <div class="tabs">
   <button class="tab active" onclick="showTab('grupos',this)">Grupos</button>
   <button class="tab" onclick="showTab('elim',this)">Eliminatorias</button>
@@ -161,21 +150,18 @@
   <button class="tab" onclick="openAdmin(this)">⚙ Admin</button>
 </div>
 
-<!-- GRUPOS -->
 <div id="page-grupos" class="page active">
-  <div style="padding:.75rem 0 0;font-size:13px;color:var(--text-muted)">Selecciona los <strong>2 equipos</strong> que clasifican de cada grupo. <span style="color:var(--amber)">1 Bs por acierto.</span></div>
+  <div style="padding:.75rem 0 0;font-size:13px;color:var(--text-muted)">Selecciona los <strong>2 equipos</strong> que clasifican de cada grupo. <span style="color:var(--amber)">1 Bs por 1 acierto · 2 Bs por los 2.</span></div>
   <div id="grupos-grid" class="groups-grid" style="margin-top:1rem"></div>
   <div class="save-bar"><button class="btn btn-green" onclick="saveMyPredictions()">💾 Guardar mis apuestas</button></div>
 </div>
 
-<!-- ELIMINATORIAS -->
 <div id="page-elim" class="page">
-  <div style="padding:.75rem 0 0;font-size:13px;color:var(--text-muted)">Elige el ganador de cada partido eliminatorio.</div>
+  <div style="padding:.75rem 0 0;font-size:13px;color:var(--text-muted)">Elige el ganador de cada partido. Se juegan del 28 Jun al 19 Jul.</div>
   <div id="elim-content" style="margin-top:1rem"></div>
   <div class="save-bar"><button class="btn btn-green" onclick="saveMyPredictions()">💾 Guardar mis apuestas</button></div>
 </div>
 
-<!-- APUESTAS -->
 <div id="page-apuestas" class="page">
   <div class="vista-toggle">
     <button class="vtab active" id="vt-comp" onclick="switchVista('comp')">Tabla comparativa</button>
@@ -185,23 +171,22 @@
   <div id="vista-jug" style="display:none"></div>
 </div>
 
-<!-- TABLA -->
 <div id="page-tabla" class="page">
   <div class="score-summary" id="score-summary"></div>
   <div class="card"><div class="card-title">Clasificación</div><div id="tabla-rows"></div></div>
 </div>
 
-<!-- REGLAS -->
 <div id="page-reglas" class="page">
   <div class="card">
     <div class="card-title">Sistema de puntos</div>
     <table style="width:100%;border-collapse:collapse;font-size:14px">
-      <thead><tr><th style="text-align:left;padding:8px 10px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border)">Fase</th><th style="padding:8px 10px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border)">Por acierto</th></tr></thead>
+      <thead><tr><th style="text-align:left;padding:8px 10px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border)">Fase</th><th style="padding:8px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);text-align:center">Puntos</th></tr></thead>
       <tbody>
-        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">Clasificado de grupo</td><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">1 Bs</span></td></tr>
-        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">Octavos / Cuartos</td><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">2 Bs</span></td></tr>
-        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">Semifinal</td><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">3 Bs</span></td></tr>
-        <tr><td style="padding:8px 10px">Campeón del mundo</td><td style="padding:8px 10px;text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">5 Bs</span></td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">1 clasificado de grupo acertado</td><td style="padding:8px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">1 Bs</span></td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">2 clasificados acertados (ambos)</td><td style="padding:8px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">2 Bs</span></td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">Ganador en 16avos / Octavos / Cuartos</td><td style="padding:8px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">2 Bs</span></td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid var(--gray-light)">Ganador de semifinal</td><td style="padding:8px;border-bottom:1px solid var(--gray-light);text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">3 Bs</span></td></tr>
+        <tr><td style="padding:8px 10px">Campeón del mundo</td><td style="padding:8px;text-align:center"><span style="background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600">5 Bs</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -209,15 +194,13 @@
     <div class="card-title">Cómo jugar</div>
     <ol style="padding-left:1.25rem;font-size:14px;line-height:2.2">
       <li>El Admin agrega tu nombre cuando pagas tu inscripción.</li>
-      <li>Buscas tu nombre en el selector y haces tus predicciones.</li>
-      <li>Presionas <strong>💾 Guardar</strong> — tus apuestas quedan en la nube.</li>
+      <li>Buscas tu nombre, haces tus predicciones y presionas <strong>💾 Guardar</strong>.</li>
       <li>El Admin registra resultados reales y los puntos se calculan solos.</li>
-      <li>En <strong>Tabla</strong> ves la clasificación en tiempo real.</li>
+      <li>En <strong>Apuestas</strong> ves todas las predicciones comparadas.</li>
     </ol>
   </div>
 </div>
 
-<!-- ADMIN -->
 <div id="page-admin" class="page">
   <div class="admin-section">
     <div class="admin-title">👥 Participantes</div>
@@ -226,31 +209,27 @@
       <button class="btn btn-primary" onclick="addPlayer()">Agregar</button>
     </div>
     <div id="players-tags" style="margin-bottom:.5rem"></div>
-    <div style="font-size:12px;color:var(--text-muted)">Haz clic en ✕ para eliminar un participante (solo si no ha apostado aún).</div>
   </div>
-
   <div class="admin-section">
     <div class="admin-title">✅ Resultados reales — Grupos</div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Marca los 2 que realmente clasificaron de cada grupo.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Marca los 2 que realmente clasificaron (el orden no importa).</p>
     <div id="admin-groups"></div>
   </div>
-
   <div class="admin-section">
     <div class="admin-title">✅ Resultados reales — Eliminatorias</div>
     <div id="admin-matches"></div>
   </div>
-
   <div class="admin-section" style="border:1px solid var(--red)">
     <div class="admin-title" style="color:var(--red)">⚠ Zona peligrosa</div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:.75rem">Limpia TODAS las apuestas y resultados. Esta acción no se puede deshacer.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:.75rem">Limpia TODAS las apuestas, jugadores y resultados. No se puede deshacer.</p>
     <button class="btn btn-danger" onclick="clearAll()">🗑 Limpiar todo</button>
   </div>
 </div>
-</div><!-- /app -->
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD6eVKADkgXnHNaFON1Wf348TtV_YqDyLk",
@@ -261,11 +240,10 @@ const firebaseConfig = {
   messagingSenderId: "327469755322",
   appId: "1:327469755322:web:0aff76299b5bd17b278b83"
 };
-
 const fireApp = initializeApp(firebaseConfig);
 const db = getDatabase(fireApp);
 
-// ── DATA ──────────────────────────────────────────────
+// ── DATOS ─────────────────────────────────────────────
 const GROUPS={
   A:['🇲🇽 México','🇿🇦 Sudáfrica','🇰🇷 Corea del Sur','🇨🇿 Chequia'],
   B:['🇨🇦 Canadá','🇶🇦 Qatar','🇨🇭 Suiza','🇧🇦 Bosnia'],
@@ -280,85 +258,88 @@ const GROUPS={
   K:['🇵🇹 Portugal','🇨🇴 Colombia','🇺🇿 Uzbekistán','🇨🇩 DR Congo'],
   L:['🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra','🇭🇷 Croacia','🇬🇭 Ghana','🇵🇦 Panamá'],
 };
+
+// Cruces REALES de los 16avos de final del Mundial 2026
 const ROUNDS=[
-  {phase:'r16',label:'Octavos de final',pts:2,matches:[
-    {id:'m01',l:'Partido 1',t1:'1°A',t2:'2°B'},{id:'m02',l:'Partido 2',t1:'1°B',t2:'2°A'},
-    {id:'m03',l:'Partido 3',t1:'1°C',t2:'2°D'},{id:'m04',l:'Partido 4',t1:'1°D',t2:'2°C'},
-    {id:'m05',l:'Partido 5',t1:'1°E',t2:'2°F'},{id:'m06',l:'Partido 6',t1:'1°F',t2:'2°E'},
-    {id:'m07',l:'Partido 7',t1:'1°G',t2:'2°H'},{id:'m08',l:'Partido 8',t1:'1°H',t2:'2°G'},
-    {id:'m09',l:'Partido 9',t1:'1°I',t2:'2°J'},{id:'m10',l:'Partido 10',t1:'1°J',t2:'2°I'},
-    {id:'m11',l:'Partido 11',t1:'1°K',t2:'2°L'},{id:'m12',l:'Partido 12',t1:'1°L',t2:'2°K'},
+  {phase:'r16', label:'16avos de final (28 Jun – 3 Jul)', pts:2, matches:[
+    {id:'m01',l:'Sudáfrica vs Canadá',         t1:'🇿🇦 Sudáfrica',       t2:'🇨🇦 Canadá'},
+    {id:'m02',l:'Alemania vs Paraguay',         t1:'🇩🇪 Alemania',        t2:'🇵🇾 Paraguay'},
+    {id:'m03',l:'Países Bajos vs Marruecos',   t1:'🇳🇱 Países Bajos',    t2:'🇲🇦 Marruecos'},
+    {id:'m04',l:'Brasil vs Japón',              t1:'🇧🇷 Brasil',          t2:'🇯🇵 Japón'},
+    {id:'m05',l:'Francia vs Suecia',            t1:'🇫🇷 Francia',         t2:'🇸🇪 Suecia'},
+    {id:'m06',l:'México vs Ecuador',            t1:'🇲🇽 México',          t2:'🇪🇨 Ecuador'},
+    {id:'m07',l:'EE.UU. vs Bosnia',             t1:'🇺🇸 EE.UU.',          t2:'🇧🇦 Bosnia'},
+    {id:'m08',l:'Bélgica vs Senegal',           t1:'🇧🇪 Bélgica',         t2:'🇸🇳 Senegal'},
+    {id:'m09',l:'Costa de Marfil vs Noruega',  t1:'🇨🇮 Costa de Marfil', t2:'🇳🇴 Noruega'},
+    {id:'m10',l:'España vs Austria',            t1:'🇪🇸 España',          t2:'🇦🇹 Austria'},
+    {id:'m11',l:'Portugal vs Croacia',          t1:'🇵🇹 Portugal',        t2:'🇭🇷 Croacia'},
+    {id:'m12',l:'Suiza vs Argelia',             t1:'🇨🇭 Suiza',           t2:'🇩🇿 Argelia'},
+    {id:'m13',l:'Australia vs Egipto',          t1:'🇦🇺 Australia',       t2:'🇪🇬 Egipto'},
+    {id:'m14',l:'Argentina vs Cabo Verde',      t1:'🇦🇷 Argentina',       t2:'🇨🇻 Cabo Verde'},
+    {id:'m15',l:'Colombia vs Ghana',            t1:'🇨🇴 Colombia',        t2:'🇬🇭 Ghana'},
+    {id:'m16',l:'Inglaterra vs DR Congo',       t1:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra',    t2:'🇨🇩 DR Congo'},
   ]},
-  {phase:'q',label:'Cuartos de final',pts:2,matches:[
-    {id:'q1',l:'Cuarto 1',t1:'G.M01',t2:'G.M02'},{id:'q2',l:'Cuarto 2',t1:'G.M03',t2:'G.M04'},
-    {id:'q3',l:'Cuarto 3',t1:'G.M05',t2:'G.M06'},{id:'q4',l:'Cuarto 4',t1:'G.M07',t2:'G.M08'},
-    {id:'q5',l:'Cuarto 5',t1:'G.M09',t2:'G.M10'},{id:'q6',l:'Cuarto 6',t1:'G.M11',t2:'G.M12'},
+  {phase:'q', label:'Octavos de final (4–7 Jul)', pts:2, matches:[
+    {id:'q1',l:'Octavo 1',t1:'G.M01',t2:'G.M02'},{id:'q2',l:'Octavo 2',t1:'G.M03',t2:'G.M04'},
+    {id:'q3',l:'Octavo 3',t1:'G.M05',t2:'G.M06'},{id:'q4',l:'Octavo 4',t1:'G.M07',t2:'G.M08'},
+    {id:'q5',l:'Octavo 5',t1:'G.M09',t2:'G.M10'},{id:'q6',l:'Octavo 6',t1:'G.M11',t2:'G.M12'},
+    {id:'q7',l:'Octavo 7',t1:'G.M13',t2:'G.M14'},{id:'q8',l:'Octavo 8',t1:'G.M15',t2:'G.M16'},
   ]},
-  {phase:'s',label:'Semifinales',pts:3,matches:[
-    {id:'s1',l:'Semifinal 1',t1:'G.Q1',t2:'G.Q2'},{id:'s2',l:'Semifinal 2',t1:'G.Q3',t2:'G.Q4'},
-    {id:'s3',l:'Semifinal 3',t1:'G.Q5',t2:'G.Q6'},
+  {phase:'s', label:'Cuartos de final (11–12 Jul)', pts:2, matches:[
+    {id:'s1',l:'Cuarto 1',t1:'G.Q1',t2:'G.Q2'},{id:'s2',l:'Cuarto 2',t1:'G.Q3',t2:'G.Q4'},
+    {id:'s3',l:'Cuarto 3',t1:'G.Q5',t2:'G.Q6'},{id:'s4',l:'Cuarto 4',t1:'G.Q7',t2:'G.Q8'},
   ]},
-  {phase:'f',label:'Final',pts:5,matches:[{id:'f1',l:'Gran Final',t1:'G.S1',t2:'G.S2'}]},
+  {phase:'sf', label:'Semifinales (15–16 Jul)', pts:3, matches:[
+    {id:'sf1',l:'Semifinal 1',t1:'G.S1',t2:'G.S2'},{id:'sf2',l:'Semifinal 2',t1:'G.S3',t2:'G.S4'},
+  ]},
+  {phase:'f', label:'Final (19 Jul – MetLife Stadium)', pts:5, matches:[
+    {id:'f1',l:'🏆 Gran Final',t1:'G.SF1',t2:'G.SF2'},
+  ]},
 ];
+
 const COLORS=['#FAC775','#9FE1CB','#AFA9EC','#F0997B','#85B7EB','#97C459','#ED93B1','#5DCAA5','#F4A460','#87CEEB'];
 const ADMIN_PIN='2026';
 
-// ── STATE ─────────────────────────────────────────────
 let players=[], active='', predictions={}, results={groups:{},matches:{}};
 let adminUnlocked=false, pendingAdminBtn=null, pinBuffer='';
 let vistaActiva='comp';
-let dirty=false; // unsaved local changes
 
-// ── FIREBASE LISTENERS ────────────────────────────────
+// ── FIREBASE ──────────────────────────────────────────
 function initListeners(){
   onValue(ref(db,'players'), snap=>{
-    players = snap.val() ? Object.values(snap.val()) : [];
-    refreshPlayerSelect();
-    renderAdminPlayerTags();
-    renderTabla();
-    renderApuestas();
+    players=snap.val()?Object.values(snap.val()):[];
+    refreshPlayerSelect();renderAdminPlayerTags();renderTabla();renderApuestas();
   });
   onValue(ref(db,'predictions'), snap=>{
-    predictions = snap.val() || {};
-    renderGroups();
-    renderElim();
-    renderTabla();
-    renderApuestas();
+    predictions=snap.val()||{};
+    renderGroups();renderElim();renderTabla();renderApuestas();
   });
   onValue(ref(db,'results'), snap=>{
-    results = snap.val() || {groups:{},matches:{}};
-    if(!results.groups) results.groups={};
-    if(!results.matches) results.matches={};
-    renderGroups();
-    renderElim();
-    renderTabla();
-    renderApuestas();
-    renderAdminGroups();
-    renderAdminMatches();
+    results=snap.val()||{groups:{},matches:{}};
+    if(!results.groups)results.groups={};
+    if(!results.matches)results.matches={};
+    renderGroups();renderElim();renderTabla();renderApuestas();
+    renderAdminGroups();renderAdminMatches();
   });
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
 }
 
-// ── PLAYERS ───────────────────────────────────────────
 async function addPlayer(){
   const inp=document.getElementById('new-player');
   const n=inp.value.trim();
   if(!n||players.includes(n)){toast('Nombre vacío o ya existe');return;}
-  const newList=[...players,n];
-  await set(ref(db,'players'), newList);
-  inp.value='';
-  toast('✅ '+n+' agregado');
+  await set(ref(db,'players'),[...players,n]);
+  inp.value='';toast('✅ '+n+' agregado');
 }
 window.addPlayer=addPlayer;
 
 async function removePlayer(name){
-  if(!confirm('¿Eliminar a '+name+'? Sus apuestas también se borrarán.'))return;
+  if(!confirm('¿Eliminar a '+name+'?'))return;
   const newList=players.filter(p=>p!==name);
-  await set(ref(db,'players'), newList.length?newList:null);
-  const newPreds={...predictions};
-  delete newPreds[name];
-  await set(ref(db,'predictions'), Object.keys(newPreds).length?newPreds:null);
+  await set(ref(db,'players'),newList.length?newList:null);
+  const np={...predictions};delete np[name];
+  await set(ref(db,'predictions'),Object.keys(np).length?np:null);
   if(active===name){active='';refreshPlayerSelect();}
   toast('🗑 '+name+' eliminado');
 }
@@ -366,14 +347,11 @@ window.removePlayer=removePlayer;
 
 function selectPlayer(name){
   active=name;
-  dirty=false;
   document.getElementById('active-label').textContent=name?'Hola, '+name+'!':'';
-  renderGroups();
-  renderElim();
+  renderGroups();renderElim();
 }
 window.selectPlayer=selectPlayer;
 
-// ── PREDICTIONS (local toggle, save on button) ────────
 function getPred(){
   if(!active)return{groups:{},matches:{}};
   return predictions[active]||{groups:{},matches:{}};
@@ -385,7 +363,6 @@ function toggleGroupPick(g,t){
   const arr=predictions[active].groups[g]=predictions[active].groups[g]||[];
   const i=arr.indexOf(t);
   if(i>=0)arr.splice(i,1);else if(arr.length<2)arr.push(t);
-  dirty=true;
   renderGroups();
 }
 window.toggleGroupPick=toggleGroupPick;
@@ -394,73 +371,74 @@ function toggleMatchPick(id,t){
   if(!active){toast('Elige tu nombre primero');return;}
   if(!predictions[active])predictions[active]={groups:{},matches:{}};
   predictions[active].matches[id]=t;
-  dirty=true;
   renderElim();
 }
 window.toggleMatchPick=toggleMatchPick;
 
 async function saveMyPredictions(){
   if(!active){toast('Elige tu nombre primero');return;}
-  await set(ref(db,'predictions/'+active), predictions[active]||{groups:{},matches:{}});
-  dirty=false;
+  await set(ref(db,'predictions/'+active),predictions[active]||{groups:{},matches:{}});
   toast('💾 Apuestas guardadas de '+active);
 }
 window.saveMyPredictions=saveMyPredictions;
 
-// ── RESULTS (admin) ───────────────────────────────────
 async function toggleRealGroup(g,t){
-  const arr=(results.groups[g]||[]).slice();
+  const arr=((results.groups||{})[g]||[]).slice();
   const i=arr.indexOf(t);
   if(i>=0)arr.splice(i,1);else if(arr.length<2)arr.push(t);
-  await set(ref(db,'results/groups/'+g), arr);
+  await set(ref(db,'results/groups/'+g),arr);
 }
 window.toggleRealGroup=toggleRealGroup;
 
 async function toggleRealMatch(id,t){
-  const cur=results.matches[id]||'';
-  await set(ref(db,'results/matches/'+id), cur===t?'':t);
+  const cur=(results.matches||{})[id]||'';
+  await set(ref(db,'results/matches/'+id),cur===t?'':t);
 }
 window.toggleRealMatch=toggleRealMatch;
 
-// ── CLEAR ALL ─────────────────────────────────────────
 async function clearAll(){
-  if(!confirm('⚠ Esto borrará TODAS las apuestas, jugadores y resultados. ¿Seguro?'))return;
+  if(!confirm('⚠ Borrará TODO. ¿Seguro?'))return;
   if(!confirm('Segunda confirmación: ¿realmente quieres limpiar TODO?'))return;
   await remove(ref(db,'/'));
-  active='';dirty=false;
-  toast('🗑 Todo limpiado');
+  active='';toast('🗑 Todo limpiado');
 }
 window.clearAll=clearAll;
 
-// ── SCORE ─────────────────────────────────────────────
+// ── PUNTAJE — sin importar orden en grupos ────────────
 function calcScore(player){
   let pts=0;
   const pred=predictions[player];
   if(!pred)return 0;
+  // Grupos: 1 Bs por cada clasificado acertado (sin importar orden)
   Object.entries(results.groups||{}).forEach(([g,real])=>{
     if(!real||real.length!==2)return;
-    (pred.groups&&pred.groups[g]||[]).forEach(t=>{if(real.includes(t))pts+=1;});
+    const picks=(pred.groups&&pred.groups[g])||[];
+    const aciertos=picks.filter(t=>real.includes(t)).length;
+    pts+=aciertos; // 1 Bs por cada uno, 2 Bs si acierta los 2
   });
+  // Eliminatorias
   ROUNDS.forEach(r=>r.matches.forEach(m=>{
     const rw=(results.matches||{})[m.id];
-    const pw=pred.matches&&pred.matches[m.id];
+    const pw=(pred.matches||{})[m.id];
     if(rw&&pw&&rw===pw)pts+=r.pts;
   }));
   return pts;
 }
 
-// ── RENDER GROUPS ─────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────
 function renderGroups(){
   const pred=getPred();
   const c=document.getElementById('grupos-grid');
   if(!c)return;
   c.innerHTML=Object.entries(GROUPS).map(([g,teams])=>{
-    const picked=pred.groups&&pred.groups[g]||[];
-    const realG=results.groups&&results.groups[g]||[];
+    const picked=(pred.groups&&pred.groups[g])||[];
+    const realG=(results.groups&&results.groups[g])||[];
     const known=realG.length===2;
     const rows=teams.map(t=>{
       const sel=picked.includes(t);
-      let cls=sel?(known?(realG.includes(t)?'chk ok':'chk fail'):'chk sel'):'chk';
+      const acertado=known&&realG.includes(t)&&sel;
+      const fallado=known&&!realG.includes(t)&&sel;
+      let cls=sel?(acertado?'chk ok':fallado?'chk fail':'chk sel'):'chk';
       return `<div class="team-row"><span style="font-size:18px">${t.slice(0,2)}</span><span class="team-name">${t.slice(3)}</span><button class="${cls}" onclick="toggleGroupPick('${g}','${esc(t)}')">✓</button></div>`;
     }).join('');
     const hint=active?picked.length+'/2 seleccionados':'Elige tu nombre arriba';
@@ -468,14 +446,13 @@ function renderGroups(){
   }).join('');
 }
 
-// ── RENDER ELIM ───────────────────────────────────────
 function renderElim(){
   const pred=getPred();
   const c=document.getElementById('elim-content');
   if(!c)return;
   c.innerHTML=ROUNDS.map(r=>{
     const ms=r.matches.map(m=>{
-      const pw=pred.matches&&pred.matches[m.id];
+      const pw=(pred.matches&&pred.matches[m.id]);
       const rw=(results.matches||{})[m.id]||'';
       const btn=t=>{
         const sel=pw===t;
@@ -488,17 +465,15 @@ function renderElim(){
   }).join('');
 }
 
-// ── RENDER APUESTAS ───────────────────────────────────
 function renderApuestas(){
   if(!players.length){
     document.getElementById('vista-comp').innerHTML='<p style="font-size:13px;color:var(--text-muted)">Agrega participantes en ⚙ Admin.</p>';
-    document.getElementById('vista-jug').innerHTML='';
-    return;
+    document.getElementById('vista-jug').innerHTML='';return;
   }
   // TABLA COMPARATIVA
   let th=`<th class="rh">Predicción</th>`+players.map(p=>`<th>${p}</th>`).join('');
   let rows='';
-  rows+=`<tr class="ph"><td colspan="${players.length+1}">Fase de grupos — 1 Bs c/u</td></tr>`;
+  rows+=`<tr class="ph"><td colspan="${players.length+1}">Fase de grupos — 1 Bs por acierto, 2 Bs los 2</td></tr>`;
   Object.entries(GROUPS).forEach(([g])=>{
     const realG=(results.groups&&results.groups[g])||[];
     const known=realG.length===2;
@@ -506,7 +481,10 @@ function renderApuestas(){
       const cells=players.map(p=>{
         const picks=(predictions[p]&&predictions[p].groups&&predictions[p].groups[g])||[];
         const pick=picks[idx]||'';
-        return`<td>${cellHtml(pick,realG[idx]||'',known)}</td>`;
+        // acierto si el equipo está en los clasificados reales
+        const ok=known&&!!pick&&realG.includes(pick);
+        const fail=known&&!!pick&&!realG.includes(pick);
+        return`<td>${!pick?`<span class="cell-e">—</span>`:ok?`<span class="cell-ok">✓ ${pick.slice(0,10)}</span>`:fail?`<span class="cell-fail">✗ ${pick.slice(0,10)}</span>`:`<span class="cell-p">${pick.slice(0,10)}</span>`}</td>`;
       }).join('');
       rows+=`<tr><td class="rh">Grupo ${g} #${idx+1}</td>${cells}</tr>`;
     });
@@ -518,7 +496,9 @@ function renderApuestas(){
       const known=!!rw;
       const cells=players.map(p=>{
         const pick=(predictions[p]&&predictions[p].matches&&predictions[p].matches[m.id])||'';
-        return`<td>${cellHtml(pick,rw,known)}</td>`;
+        const ok=known&&pick===rw;
+        const fail=known&&!!pick&&pick!==rw;
+        return`<td>${!pick?`<span class="cell-e">—</span>`:ok?`<span class="cell-ok">✓</span>`:fail?`<span class="cell-fail">✗</span>`:`<span class="cell-p">${pick.slice(0,8)}</span>`}</td>`;
       }).join('');
       rows+=`<tr><td class="rh">${m.l}</td>${cells}</tr>`;
     });
@@ -539,7 +519,9 @@ function renderApuestas(){
       const known=realG.length===2;
       if(!picks.length){gRows+=`<div class="pcard-row"><span style="color:var(--text-hint)">Grupo ${g}</span><span style="color:var(--text-hint);font-size:11px">sin apuesta</span></div>`;return;}
       picks.forEach((t,i)=>{
-        const badge=known?(realG.includes(t)?`<span class="badge-ok">✓ +1</span>`:`<span class="badge-fail">✗</span>`):`<span class="badge-p">${t.slice(0,12)}</span>`;
+        const ok=known&&realG.includes(t);
+        const fail=known&&!realG.includes(t);
+        const badge=ok?`<span class="badge-ok">✓ +1</span>`:fail?`<span class="badge-fail">✗</span>`:`<span class="badge-p">${t.slice(0,12)}</span>`;
         gRows+=`<div class="pcard-row"><span style="font-size:11px;color:var(--text-muted)">Gpo ${g} #${i+1}</span>${badge}</div>`;
       });
     });
@@ -556,14 +538,6 @@ function renderApuestas(){
   document.getElementById('vista-jug').innerHTML=`<div class="player-cards">${cards}</div>`;
 }
 
-function cellHtml(pick,real,known){
-  if(!pick)return`<span class="cell-e">—</span>`;
-  const s=pick.length>14?pick.slice(0,14)+'…':pick;
-  if(!known)return`<span class="cell-p">${s}</span>`;
-  return pick===real?`<span class="cell-ok">✓ ${s}</span>`:`<span class="cell-fail">✗ ${s}</span>`;
-}
-
-// ── RENDER TABLA ──────────────────────────────────────
 function renderTabla(){
   const scores=players.map(p=>({name:p,pts:calcScore(p)})).sort((a,b)=>b.pts-a.pts);
   const total=scores.reduce((s,x)=>s+x.pts,0);
@@ -578,7 +552,6 @@ function renderTabla(){
     :'<p style="font-size:13px;color:var(--text-muted)">Sin participantes aún.</p>';
 }
 
-// ── RENDER ADMIN ──────────────────────────────────────
 function renderAdminPlayerTags(){
   document.getElementById('players-tags').innerHTML=players.map(p=>
     `<span class="player-tag">${p}<button onclick="removePlayer('${esc(p)}')" title="Eliminar">✕</button></span>`
@@ -604,7 +577,6 @@ function renderAdminMatches(){
   ).join('');
 }
 
-// ── UI HELPERS ────────────────────────────────────────
 function refreshPlayerSelect(){
   const sel=document.getElementById('player-sel');
   sel.innerHTML='<option value="">— Elige tu nombre —</option>'+
@@ -644,33 +616,20 @@ function pinKey(d){
   pinBuffer+=d;updatePinDots();
   if(pinBuffer.length===4){
     setTimeout(()=>{
-      if(pinBuffer===ADMIN_PIN){
-        adminUnlocked=true;
-        document.getElementById('pin-modal').classList.remove('open');
-        showTab('admin',pendingAdminBtn);
-      } else {
-        document.getElementById('pin-error').textContent='PIN incorrecto';
-        pinBuffer='';updatePinDots();
-      }
+      if(pinBuffer===ADMIN_PIN){adminUnlocked=true;document.getElementById('pin-modal').classList.remove('open');showTab('admin',pendingAdminBtn);}
+      else{document.getElementById('pin-error').textContent='PIN incorrecto';pinBuffer='';updatePinDots();}
     },200);
   }
 }
 window.pinKey=pinKey;
-
 function pinClear(){if(pinBuffer.length){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();}}
 function pinCancel(){document.getElementById('pin-modal').classList.remove('open');}
 function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuffer.length));}
 window.pinClear=pinClear;window.pinCancel=pinCancel;
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 
-// ── INIT ──────────────────────────────────────────────
 initListeners();
 </script>
 </body>
