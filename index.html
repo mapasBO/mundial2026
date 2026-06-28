@@ -106,8 +106,8 @@ input[type=text]{flex:1;padding:9px 12px;border:1px solid #D3D1C7;border-radius:
   <div id="page-r16" class="page active">
     <div class="info-box">
       🎯 Elige el ganador de cada partido.<br>
-      <strong>Adultos (+12 años): 2 Bs por acierto</strong><br>
-      <strong>Niños (-12 años): 1 Bs por acierto</strong>
+      <strong>Adultos (+12 años): 2 Bs por acierto (1pt ×2)</strong><br>
+      <strong>Niños (-12 años): 1 Bs por acierto (1pt ×1)</strong>
     </div>
     <div id="list-r16"></div>
     <div class="save-bar"><button class="btn-save" onclick="guardar()">💾 Guardar mis apuestas</button></div>
@@ -337,7 +337,7 @@ function scorePlayer(p){
   const d=preds[p]||{};
   const m=d.matches||{};
   let pts=0;
-  R16.forEach(match=>{ if(mresults[match.id]&&m[match.id]&&mresults[match.id]===m[match.id]) pts+=2; });
+  R16.forEach(match=>{ if(mresults[match.id]&&m[match.id]&&mresults[match.id]===m[match.id]) pts+=1; });
   PHASES.forEach(ph=>{
     const defs=matchDefs[ph.id]||{};
     for(let i=0;i<ph.count;i++){
