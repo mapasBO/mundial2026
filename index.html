@@ -211,6 +211,11 @@
     <div id="players-tags" style="margin-bottom:.5rem"></div>
   </div>
   <div class="admin-section">
+    <div class="admin-title">💰 Multiplicador por jugador</div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Mayores de 12 años pagan ×3 Bs, menores ×1 Bs.</p>
+    <div id="admin-multipliers"></div>
+  </div>
+  <div class="admin-section">
     <div class="admin-title">✅ Resultados reales — Grupos</div>
     <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Marca los 2 que realmente clasificaron (el orden no importa).</p>
     <div id="admin-groups"></div>
@@ -319,7 +324,7 @@ function initListeners(){
     if(!results.groups)results.groups={};
     if(!results.matches)results.matches={};
     renderGroups();renderElim();renderTabla();renderApuestas();
-    renderAdminGroups();renderAdminMatches();
+    renderAdminGroups();renderAdminMatches();renderAdminMultipliers();
   });
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
@@ -425,6 +430,15 @@ function calcScore(player){
   return pts;
 }
 
+// ── MULTIPLICADORES ──────────────────────────────────
+// adultos=3, niños=1; el admin puede cambiar esto en Firebase
+function getMultiplier(player){
+  return (results.multipliers&&results.multipliers[player])||1;
+}
+function calcBs(player){
+  return calcScore(player)*getMultiplier(player);
+}
+
 // ── RENDER ────────────────────────────────────────────
 function renderGroups(){
   const pred=getPred();
@@ -503,7 +517,7 @@ function renderApuestas(){
       rows+=`<tr><td class="rh">${m.l}</td>${cells}</tr>`;
     });
   });
-  const totals=players.map(p=>`<td style="font-weight:700;background:var(--amber-light);color:var(--amber)">${calcScore(p)} Bs</td>`).join('');
+  const totals=players.map(p=>`<td style="font-weight:700;background:var(--amber-light);color:var(--amber)">${calcScore(p)}pts = ${calcBs(p)} Bs</td>`).join('');
   rows+=`<tr><td class="rh" style="font-weight:700">Total</td>${totals}</tr>`;
   document.getElementById('vista-comp').innerHTML=`<div class="comp-wrap"><table class="comp-table"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table></div>`;
 
@@ -533,22 +547,22 @@ function renderApuestas(){
       const badge=!pick?`<span style="color:var(--text-hint);font-size:11px">—</span>`:known?(pick===rw?`<span class="badge-ok">✓ +${r.pts}</span>`:`<span class="badge-fail">✗</span>`):`<span class="badge-p">${pick.slice(0,10)}</span>`;
       mRows+=`<div class="pcard-row"><span style="font-size:11px;color:var(--text-muted)">${m.l}</span>${badge}</div>`;
     }));
-    return `<div class="pcard"><div class="pcard-h"><div class="avatar" style="background:${color}30;color:${color}">${p.slice(0,2).toUpperCase()}</div><span style="flex:1;font-size:14px;font-weight:600">${p}</span><span style="font-size:13px;font-weight:600;color:var(--amber)">${pts} Bs</span></div><div class="pcard-body"><div class="pcard-sec">Grupos</div>${gRows}<div class="pcard-sec" style="margin-top:.5rem">Eliminatorias</div>${mRows}</div></div>`;
+    return `<div class="pcard"><div class="pcard-h"><div class="avatar" style="background:${color}30;color:${color}">${p.slice(0,2).toUpperCase()}</div><span style="flex:1;font-size:14px;font-weight:600">${p}</span><span style="font-size:11px;color:var(--text-muted)">${pts}pts</span><span style="font-size:13px;font-weight:600;color:var(--amber);margin-left:4px">${calcBs(p)} Bs</span></div><div class="pcard-body"><div class="pcard-sec">Grupos</div>${gRows}<div class="pcard-sec" style="margin-top:.5rem">Eliminatorias</div>${mRows}</div></div>`;
   }).join('');
   document.getElementById('vista-jug').innerHTML=`<div class="player-cards">${cards}</div>`;
 }
 
 function renderTabla(){
-  const scores=players.map(p=>({name:p,pts:calcScore(p)})).sort((a,b)=>b.pts-a.pts);
+  const scores=players.map(p=>({name:p,pts:calcScore(p)})).sort((a,b)=>calcBs(b.name)-calcBs(a.name));
   const total=scores.reduce((s,x)=>s+x.pts,0);
   document.getElementById('score-summary').innerHTML=`
     <div class="metric"><div class="metric-label">Participantes</div><div class="metric-val">${players.length}</div></div>
-    <div class="metric"><div class="metric-label">Puntos totales</div><div class="metric-val">${total} Bs</div></div>
+    <div class="metric"><div class="metric-label">Bs totales en juego</div><div class="metric-val">${scores.reduce((s,x)=>s+calcBs(x.name),0)} Bs</div></div>
     <div class="metric"><div class="metric-label">Líder</div><div class="metric-val" style="font-size:15px">${scores[0]?.name||'—'}</div></div>
   `;
   const medals=['🥇','🥈','🥉'];
   document.getElementById('tabla-rows').innerHTML=scores.length
-    ?scores.map((s,i)=>`<div class="lb-row"><span style="font-size:13px;font-weight:600;color:var(--text-muted);width:20px;text-align:center">${i+1}</span><div class="avatar" style="background:${COLORS[i%COLORS.length]}30;color:${COLORS[i%COLORS.length]}">${s.name.slice(0,2).toUpperCase()}</div><span style="flex:1;font-size:14px">${s.name}</span>${medals[i]?`<span style="font-size:18px">${medals[i]}</span>`:''}<span style="font-size:14px;font-weight:600">${s.pts} Bs</span></div>`).join('')
+    ?scores.map((s,i)=>`<div class="lb-row"><span style="font-size:13px;font-weight:600;color:var(--text-muted);width:20px;text-align:center">${i+1}</span><div class="avatar" style="background:${COLORS[i%COLORS.length]}30;color:${COLORS[i%COLORS.length]}">${s.name.slice(0,2).toUpperCase()}</div><span style="flex:1;font-size:14px">${s.name}</span>${medals[i]?`<span style="font-size:18px">${medals[i]}</span>`:''}<span style="font-size:11px;color:var(--text-muted);margin-right:4px">${s.pts}pts ×${getMultiplier(s.name)}</span><span style="font-size:14px;font-weight:600;color:var(--amber)">${calcBs(s.name)} Bs</span></div>`).join('')
     :'<p style="font-size:13px;color:var(--text-muted)">Sin participantes aún.</p>';
 }
 
@@ -590,7 +604,7 @@ function showTab(name,btn){
   btn.classList.add('active');
   if(name==='tabla')renderTabla();
   if(name==='apuestas')renderApuestas();
-  if(name==='admin'){renderAdminGroups();renderAdminMatches();renderAdminPlayerTags();}
+  if(name==='admin'){renderAdminGroups();renderAdminMatches();renderAdminPlayerTags();renderAdminMultipliers();}
 }
 window.showTab=showTab;
 
@@ -629,6 +643,25 @@ window.pinClear=pinClear;window.pinCancel=pinCancel;
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+
+function renderAdminMultipliers(){
+  const el=document.getElementById('admin-multipliers');
+  if(!el)return;
+  el.innerHTML=players.map(p=>{
+    const mult=getMultiplier(p);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="flex:1;font-size:13px">${p}</span>
+      <button class="real-btn${mult===1?' active':''}" onclick="setMultiplier('${esc(p)}',1)">×1 (niño)</button>
+      <button class="real-btn${mult===3?' active':''}" onclick="setMultiplier('${esc(p)}',3)">×3 (adulto)</button>
+    </div>`;
+  }).join('')||'<span style="font-size:13px;color:var(--text-muted)">Sin participantes.</span>';
+}
+
+async function setMultiplier(player, val){
+  await set(ref(db,'results/multipliers/'+player), val);
+  toast(player+' → ×'+val);
+}
+window.setMultiplier=setMultiplier;
 
 initListeners();
 </script>
